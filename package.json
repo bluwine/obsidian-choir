@@ -1,0 +1,33 @@
+{
+  "name": "obsidian-choir",
+  "version": "0.0.1",
+  "description": "Spotify-like offline music player for Obsidian vault audio files.",
+  "private": true,
+  "license": "MIT",
+  "author": "bluwine",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bluwine/obsidian-choir.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bluwine/obsidian-choir/issues"
+  },
+  "homepage": "https://github.com/bluwine/obsidian-choir#readme",
+  "keywords": [
+    "obsidian",
+    "obsidian-plugin",
+    "music",
+    "audio",
+    "offline"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "node build.mjs production",
+    "dev": "node build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "obsidian": "^1.5.7",
+    "typescript": "^5.4.5"
+  }
+}

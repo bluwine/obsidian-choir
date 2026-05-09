@@ -1,0 +1,822 @@
+.workspace-leaf-content[data-type="choir-player"],
+.workspace-leaf-content[data-type="choir-audio-file"] {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--interactive-accent) 10%, transparent), transparent 46%),
+    rgb(18 18 18);
+}
+
+.workspace-leaf-content[data-type="choir-player"] .view-content,
+.workspace-leaf-content[data-type="choir-audio-file"] .view-content {
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.choir-view {
+  --choir-bg-rgb: 18 18 18;
+  --choir-muted-rgb: 88 96 90;
+  --choir-accent: var(--interactive-accent);
+  --choir-ink: rgb(246 246 246);
+  --choir-ink-muted: rgb(178 178 178);
+  --choir-ink-faint: rgb(128 128 128);
+  --choir-panel: rgb(18 18 18);
+  --choir-panel-raised: rgb(32 32 32);
+  --choir-line: rgb(255 255 255 / 0.08);
+  --choir-hover: rgb(255 255 255 / 0.075);
+  --choir-active: color-mix(in srgb, var(--choir-accent) 14%, transparent);
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 10px;
+  color: var(--choir-ink);
+  background:
+    radial-gradient(circle at 14% 8%, color-mix(in srgb, var(--choir-accent) 18%, transparent), transparent 36%),
+    radial-gradient(circle at 88% 100%, rgb(var(--choir-bg-rgb) / 0.42), transparent 42%),
+    linear-gradient(180deg, rgb(var(--choir-bg-rgb) / 0.16), rgb(10 10 10 / 0.04));
+}
+
+.choir-shell {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 16% 0%, color-mix(in srgb, var(--choir-accent) 15%, transparent), transparent 32%),
+    linear-gradient(180deg, rgb(var(--choir-bg-rgb) / 0.54), rgb(18 18 18 / 0.98) 96px, rgb(10 10 10 / 0.98));
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.035),
+    0 0 28px color-mix(in srgb, var(--choir-accent) 12%, transparent),
+    0 18px 44px rgb(0 0 0 / 0.22);
+}
+
+.choir-view.is-flush {
+  padding: 0;
+  background: rgb(var(--choir-bg-rgb) / 0.2);
+}
+
+.choir-view.is-flush .choir-shell {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.choir-view.is-compact .choir-header {
+  gap: 7px;
+  padding: 9px 8px 6px;
+}
+
+.choir-view.is-compact .choir-tabs {
+  padding: 5px;
+}
+
+.choir-view.is-compact .choir-body {
+  padding: 6px 5px 8px;
+}
+
+.choir-header {
+  display: grid;
+  gap: 10px;
+  padding: 12px 10px 8px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.04);
+}
+
+.choir-title-wrap {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+}
+
+.choir-logo {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border-radius: 50%;
+  color: rgb(0 0 0);
+  background: var(--choir-accent);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--choir-accent) 18%, transparent);
+}
+
+.choir-logo svg,
+.choir-search-icon svg,
+.choir-tab-icon svg,
+.choir-text-button-icon svg,
+.choir-volume-mute svg,
+.choir-cover svg,
+.choir-empty-icon svg,
+.choir-file-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.choir-title-meta {
+  display: grid;
+  min-width: 0;
+}
+
+.choir-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--choir-ink);
+  font-size: 17px;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.choir-title-subtitle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--choir-ink-muted);
+  font-size: 11px;
+}
+
+.choir-search-wrap {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  height: 36px;
+  border: 1px solid rgb(255 255 255 / 0.11);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.choir-search-wrap:focus-within {
+  border-color: color-mix(in srgb, var(--choir-accent) 46%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--choir-accent) 12%, transparent);
+}
+
+.choir-search-icon {
+  display: grid;
+  place-items: center;
+  color: var(--choir-ink-muted);
+}
+
+.choir-search-input {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  padding: 0 12px 0 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  color: var(--choir-ink) !important;
+  box-shadow: none !important;
+}
+
+.choir-search-input::placeholder {
+  color: rgb(255 255 255 / 0.46);
+}
+
+.choir-search-input:focus {
+  box-shadow: none !important;
+}
+
+.choir-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: rgb(0 0 0 / 0.24);
+  border-bottom: 1px solid rgb(255 255 255 / 0.06);
+}
+
+.choir-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.choir-tab {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: max-content;
+  height: 32px;
+  gap: 4px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--choir-ink-muted);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.choir-tab span:not(.choir-tab-icon) {
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.choir-tab:hover {
+  color: var(--choir-ink);
+  background: rgb(255 255 255 / 0.08);
+}
+
+.choir-tab.is-active {
+  color: rgb(0 0 0);
+  background: var(--choir-accent);
+}
+
+.choir-body {
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 6px 10px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--choir-accent) 5%, transparent), transparent 68px),
+    rgb(0 0 0 / 0.24);
+}
+
+.choir-section-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 30px;
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+
+.choir-section-toolbar-stacked {
+  display: grid;
+  align-items: stretch;
+}
+
+.choir-section-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--choir-ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.choir-detail-top,
+.choir-inline-actions {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 6px;
+}
+
+.choir-playlist-heading {
+  min-width: 0;
+}
+
+.choir-track-list,
+.choir-playlist-list {
+  display: grid;
+  gap: 2px;
+}
+
+.choir-track-row,
+.choir-playlist-row {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 46px;
+  gap: 8px;
+  padding: 5px 34px 5px 5px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+}
+
+.choir-track-row {
+  grid-template-columns: 20px 34px minmax(0, 1fr);
+}
+
+.choir-view.hide-track-numbers .choir-track-row {
+  grid-template-columns: 34px minmax(0, 1fr);
+}
+
+.choir-view.hide-covers .choir-track-row {
+  grid-template-columns: 20px minmax(0, 1fr);
+}
+
+.choir-view.hide-track-numbers.hide-covers .choir-track-row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.choir-playlist-row {
+  grid-template-columns: 38px minmax(0, 1fr);
+  min-height: 50px;
+  padding-right: 72px;
+  background: rgb(255 255 255 / 0.045);
+  border-color: rgb(255 255 255 / 0.035);
+}
+
+.choir-view.hide-covers .choir-playlist-row,
+.choir-view.hide-covers .choir-now-playing {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.choir-view.is-compact .choir-track-row,
+.choir-view.is-compact .choir-playlist-row {
+  min-height: 40px;
+  gap: 7px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.choir-track-row:hover,
+.choir-track-row:focus-within,
+.choir-playlist-row:hover,
+.choir-playlist-row:focus-within {
+  background: var(--choir-hover);
+}
+
+.choir-track-row.is-current {
+  background: var(--choir-active);
+  border-color: color-mix(in srgb, var(--choir-accent) 22%, transparent);
+}
+
+.choir-track-row.is-current .choir-track-title {
+  color: var(--choir-accent);
+}
+
+.choir-track-row.is-missing {
+  opacity: 0.58;
+}
+
+.choir-track-number {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 22px;
+  color: var(--choir-ink-faint);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.choir-view.hide-track-numbers .choir-track-number {
+  display: none;
+}
+
+.choir-cover {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: rgb(255 255 255 / 0.82);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--choir-accent) 32%, transparent), transparent 58%),
+    rgb(42 42 42);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
+.choir-cover-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.choir-track-cover {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+}
+
+.choir-view.hide-covers .choir-track-cover,
+.choir-view.hide-covers .choir-playlist-cover,
+.choir-view.hide-covers .choir-now-cover {
+  display: none;
+}
+
+.choir-view.is-compact .choir-track-cover {
+  width: 30px;
+  height: 30px;
+}
+
+.choir-track-cover svg {
+  width: 15px;
+  height: 15px;
+}
+
+.choir-playlist-cover {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+}
+
+.choir-track-meta,
+.choir-playlist-info,
+.choir-now-details {
+  min-width: 0;
+}
+
+.choir-track-title,
+.choir-playlist-title,
+.choir-now-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--choir-ink);
+  font-size: 12.5px;
+  font-weight: 730;
+  line-height: 1.2;
+}
+
+.choir-track-subtitle,
+.choir-playlist-subtitle,
+.choir-now-subtitle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--choir-ink-muted);
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+.choir-track-actions {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: rgb(18 18 18 / 0.92);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 120ms ease;
+}
+
+.choir-track-row:hover .choir-track-actions,
+.choir-track-row:focus-within .choir-track-actions,
+.choir-playlist-row:hover .choir-track-actions,
+.choir-playlist-row:focus-within .choir-track-actions,
+.choir-view.show-row-actions .choir-track-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.choir-icon-button,
+.choir-text-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--choir-ink-muted);
+  background: transparent;
+  box-shadow: none;
+  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.choir-icon-button {
+  width: 28px;
+  padding: 0;
+}
+
+.choir-icon-button svg,
+.choir-text-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.choir-icon-button:hover,
+.choir-text-button:hover,
+.choir-icon-button.is-active,
+.choir-text-button.is-active {
+  color: var(--choir-ink);
+  background: rgb(255 255 255 / 0.1);
+}
+
+.choir-icon-button.is-active {
+  color: var(--choir-accent);
+}
+
+.choir-icon-button:disabled,
+.choir-text-button:disabled {
+  cursor: default;
+  opacity: 0.42;
+}
+
+.choir-primary-control {
+  width: 40px;
+  height: 40px;
+  color: rgb(0 0 0);
+  background: var(--choir-accent);
+}
+
+.choir-primary-control:hover {
+  color: rgb(0 0 0);
+  background: color-mix(in srgb, var(--choir-accent) 82%, white);
+  transform: scale(1.04);
+}
+
+.choir-text-button {
+  gap: 6px;
+  max-width: 100%;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.choir-small-button {
+  height: 28px;
+  padding: 0 9px;
+  background: rgb(255 255 255 / 0.07);
+}
+
+.choir-text-button-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.choir-player {
+  display: grid;
+  gap: 8px;
+  padding: 9px 10px 10px;
+  min-width: 0;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--choir-accent) 10%, transparent), rgb(18 18 18 / 0) 56px),
+    rgb(18 18 18 / 0.99);
+  box-shadow: 0 -18px 34px rgb(0 0 0 / 0.34);
+}
+
+.choir-view.is-compact .choir-player {
+  gap: 6px;
+  padding: 7px 8px 8px;
+}
+
+.choir-now-playing {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.choir-now-cover {
+  width: 44px;
+  height: 44px;
+  border-radius: 5px;
+  box-shadow: 0 10px 22px rgb(0 0 0 / 0.34);
+}
+
+.choir-now-cover svg {
+  width: 19px;
+  height: 19px;
+}
+
+.choir-progress-wrap {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+}
+
+.choir-time {
+  color: var(--choir-ink-muted);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.choir-progress,
+.choir-volume-slider {
+  width: 100%;
+  min-width: 0;
+  accent-color: var(--choir-accent);
+}
+
+.choir-progress {
+  width: 100% !important;
+  max-width: none;
+}
+
+.choir-controls {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  justify-items: center;
+  align-items: center;
+  gap: 3px;
+}
+
+.choir-volume {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+}
+
+.choir-volume-mute {
+  color: var(--choir-ink-muted);
+}
+
+.choir-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 24px 14px;
+  text-align: center;
+  color: var(--choir-ink-muted);
+}
+
+.choir-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: rgb(0 0 0);
+  background: var(--choir-accent);
+}
+
+.choir-empty-title {
+  color: var(--choir-ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.choir-empty-description {
+  max-width: 28em;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.choir-file-view {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: rgb(246 246 246);
+  background: rgb(18 18 18);
+}
+
+.choir-file-card {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  max-width: 320px;
+  padding: 18px;
+  text-align: center;
+}
+
+.choir-file-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: rgb(0 0 0);
+  background: rgb(30 215 96);
+}
+
+.choir-file-title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.choir-file-desc {
+  color: rgb(178 178 178);
+  font-size: 13px;
+}
+
+.choir-file-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.choir-settings-tab-order {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 18px;
+  max-width: 420px;
+}
+
+.choir-settings-tab-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-secondary);
+  cursor: grab;
+}
+
+.choir-settings-tab-row:active {
+  cursor: grabbing;
+}
+
+.choir-settings-tab-row.is-dragging {
+  opacity: 0.55;
+}
+
+.choir-settings-tab-row.is-drop-before::before,
+.choir-settings-tab-row.is-drop-after::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  left: 8px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--interactive-accent);
+}
+
+.choir-settings-tab-row.is-drop-before::before {
+  top: -5px;
+}
+
+.choir-settings-tab-row.is-drop-after::after {
+  bottom: -5px;
+}
+
+.choir-settings-tab-grip,
+.choir-settings-tab-icon {
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+}
+
+.choir-settings-tab-grip svg,
+.choir-settings-tab-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.choir-settings-tab-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+.choir-modal-form {
+  display: grid;
+  gap: 14px;
+}
+
+.choir-modal-input {
+  width: 100%;
+}
+
+.choir-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 360px) {
+  .choir-header {
+    padding: 10px 10px 8px;
+  }
+
+  .choir-track-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .choir-track-number {
+    display: none;
+  }
+
+  .choir-tab {
+    padding: 0 9px;
+    font-size: 11px;
+  }
+
+  .choir-text-button-label {
+    display: none;
+  }
+
+  .choir-text-button {
+    width: 28px;
+    padding: 0;
+  }
+}

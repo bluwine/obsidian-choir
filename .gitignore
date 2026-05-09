@@ -1,0 +1,19 @@
+node_modules/
+npm-debug.log*
+
+# Local Obsidian plugin state
+data.json
+.hotreload
+
+# Development output that is not a release asset
+*.map
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Temporary files
+*.tmp
+*.bak
