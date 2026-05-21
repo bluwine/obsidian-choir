@@ -149,6 +149,8 @@ Run the full local verification path:
 npm run check
 ```
 
+`npm run check` also fails if the generated release assets are stale after the build.
+
 Release assets are intentionally checked in:
 
 - `main.js`

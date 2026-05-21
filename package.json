@@ -24,7 +24,7 @@
     "typecheck": "tsc --noEmit",
     "build": "node build.mjs production",
     "dev": "node build.mjs",
-    "check": "npm run typecheck && npm run build && node --check main.js"
+    "check": "npm run typecheck && npm run build && node --check main.js && git diff --exit-code -- main.js styles.css"
   },
   "devDependencies": {
     "esbuild": "^0.28.0",
