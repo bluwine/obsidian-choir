@@ -37,6 +37,8 @@ const DEFAULT_VOLUME = 0.85;
 const DEFAULT_RECENT_LIMIT = 100;
 const MIN_RECENT_LIMIT = 20;
 const MAX_RECENT_LIMIT = 500;
+const MAX_METADATA_READS = 3;
+const MAX_ARTWORK_READS = 2;
 
 type RepeatMode = "off" | "all" | "one";
 type ChoirTab = "library" | "artists" | "recent" | "queue" | "playlists";
@@ -1245,6 +1247,10 @@ export default class ChoirPlugin extends Plugin {
   private statusEl: HTMLElement | null = null;
   private artworkCache = new Map<string, ArtworkCacheEntry>();
   private metadataCache = new Map<string, MetadataCacheEntry>();
+  private artworkQueue: string[] = [];
+  private metadataQueue: string[] = [];
+  private artworkLoadsActive = 0;
+  private metadataLoadsActive = 0;
   private artworkRefreshTimer: number | null = null;
   private metadataRefreshTimer: number | null = null;
   private saveTimer: number | null = null;
@@ -1288,6 +1294,8 @@ export default class ChoirPlugin extends Plugin {
     for (const entry of this.artworkCache.values()) {
       if (entry.artwork) URL.revokeObjectURL(entry.artwork.objectUrl);
     }
+    this.artworkQueue = [];
+    this.metadataQueue = [];
     this.artworkCache.clear();
     this.metadataCache.clear();
   }
@@ -1471,27 +1479,46 @@ export default class ChoirPlugin extends Plugin {
       status: "loading",
     };
     this.metadataCache.set(file.path, entry);
+    this.metadataQueue.push(file.path);
+    this.pumpMetadataQueue();
+  }
 
-    entry.promise = this.extractMetadata(file)
-      .then((metadata) => {
-        const current = this.metadataCache.get(file.path);
-        if (current !== entry) return;
-        if (metadata && hasMetadata(metadata)) {
-          current.status = "ready";
-          current.metadata = metadata;
-        } else {
-          current.status = "missing";
-        }
-        this.scheduleMetadataRefresh();
-      })
-      .catch((error) => {
-        console.warn(`[choir] Could not read embedded metadata from ${file.path}.`, error);
-        const current = this.metadataCache.get(file.path);
-        if (current === entry) {
-          current.status = "missing";
+  private pumpMetadataQueue(): void {
+    while (this.metadataLoadsActive < MAX_METADATA_READS && this.metadataQueue.length > 0) {
+      const path = this.metadataQueue.shift();
+      if (!path) continue;
+
+      const entry = this.metadataCache.get(path);
+      const file = this.getAudioFile(path);
+      if (!entry || entry.promise || !file) continue;
+      if (entry.mtime !== file.stat.mtime || entry.size !== file.stat.size) continue;
+
+      this.metadataLoadsActive += 1;
+      entry.promise = this.extractMetadata(file)
+        .then((metadata) => {
+          const current = this.metadataCache.get(path);
+          if (current !== entry) return;
+          if (metadata && hasMetadata(metadata)) {
+            current.status = "ready";
+            current.metadata = metadata;
+          } else {
+            current.status = "missing";
+          }
           this.scheduleMetadataRefresh();
-        }
-      });
+        })
+        .catch((error) => {
+          console.warn(`[choir] Could not read embedded metadata from ${path}.`, error);
+          const current = this.metadataCache.get(path);
+          if (current === entry) {
+            current.status = "missing";
+            this.scheduleMetadataRefresh();
+          }
+        })
+        .finally(() => {
+          this.metadataLoadsActive -= 1;
+          this.pumpMetadataQueue();
+        });
+    }
   }
 
   private async extractMetadata(file: TFile): Promise<TrackMetadata | null> {
@@ -1515,31 +1542,50 @@ export default class ChoirPlugin extends Plugin {
       status: "loading",
     };
     this.artworkCache.set(file.path, entry);
+    this.artworkQueue.push(file.path);
+    this.pumpArtworkQueue();
+  }
 
-    entry.promise = this.extractArtwork(file)
-      .then((artwork) => {
-        const current = this.artworkCache.get(file.path);
-        if (current !== entry) {
-          if (artwork) URL.revokeObjectURL(artwork.objectUrl);
-          return;
-        }
+  private pumpArtworkQueue(): void {
+    while (this.artworkLoadsActive < MAX_ARTWORK_READS && this.artworkQueue.length > 0) {
+      const path = this.artworkQueue.shift();
+      if (!path) continue;
 
-        if (artwork) {
-          current.status = "ready";
-          current.artwork = artwork;
-        } else {
-          current.status = "missing";
-        }
-        this.scheduleArtworkRefresh();
-      })
-      .catch((error) => {
-        console.warn(`[choir] Could not read embedded artwork from ${file.path}.`, error);
-        const current = this.artworkCache.get(file.path);
-        if (current === entry) {
-          current.status = "missing";
+      const entry = this.artworkCache.get(path);
+      const file = this.getAudioFile(path);
+      if (!entry || entry.promise || !file) continue;
+      if (entry.mtime !== file.stat.mtime || entry.size !== file.stat.size) continue;
+
+      this.artworkLoadsActive += 1;
+      entry.promise = this.extractArtwork(file)
+        .then((artwork) => {
+          const current = this.artworkCache.get(path);
+          if (current !== entry) {
+            if (artwork) URL.revokeObjectURL(artwork.objectUrl);
+            return;
+          }
+
+          if (artwork) {
+            current.status = "ready";
+            current.artwork = artwork;
+          } else {
+            current.status = "missing";
+          }
           this.scheduleArtworkRefresh();
-        }
-      });
+        })
+        .catch((error) => {
+          console.warn(`[choir] Could not read embedded artwork from ${path}.`, error);
+          const current = this.artworkCache.get(path);
+          if (current === entry) {
+            current.status = "missing";
+            this.scheduleArtworkRefresh();
+          }
+        })
+        .finally(() => {
+          this.artworkLoadsActive -= 1;
+          this.pumpArtworkQueue();
+        });
+    }
   }
 
   private async extractArtwork(file: TFile): Promise<ArtworkData | null> {

@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Debounced plugin-data saves to avoid repeated immediate writes during rapid UI changes.
+- Bounded concurrent metadata and cover-art reads so large libraries do not start many full-file reads at once.
 - Kept queued playback index stable when a deleted audio file appears before the current track.
 - Invalidated embedded metadata and cover-art caches when vault audio files are modified.
 - Copied `src/styles.css` during the development watcher when CSS changes.
