@@ -443,6 +443,40 @@ function normalizeData(value: unknown): ChoirData {
   };
 }
 
+function cloneSettings(settings: ChoirSettings): ChoirSettings {
+  return {
+    ...settings,
+    musicFolders: [...settings.musicFolders],
+    excludedFolders: [...settings.excludedFolders],
+    tabOrder: [...settings.tabOrder],
+  };
+}
+
+function cloneChoirData(data: ChoirData): ChoirData {
+  return {
+    playlists: data.playlists.map((playlist) => ({
+      ...playlist,
+      trackPaths: [...playlist.trackPaths],
+    })),
+    queue: [...data.queue],
+    currentIndex: data.currentIndex,
+    repeatMode: data.repeatMode,
+    shuffle: data.shuffle,
+    volume: data.volume,
+    recentlyPlayed: data.recentlyPlayed.map((track) => ({ ...track })),
+    settings: cloneSettings(data.settings),
+  };
+}
+
+function dataForSave(data: ChoirData): ChoirData {
+  const snapshot = cloneChoirData(data);
+  if (!snapshot.settings.rememberQueue) {
+    snapshot.queue = [];
+    snapshot.currentIndex = -1;
+  }
+  return snapshot;
+}
+
 function readAscii(bytes: Uint8Array, start: number, length: number): string {
   let value = "";
   const end = Math.min(bytes.length, start + length);
@@ -1213,6 +1247,8 @@ export default class ChoirPlugin extends Plugin {
   private metadataCache = new Map<string, MetadataCacheEntry>();
   private artworkRefreshTimer: number | null = null;
   private metadataRefreshTimer: number | null = null;
+  private saveTimer: number | null = null;
+  private savePromise: Promise<void> = Promise.resolve();
   private volumeBeforeMute = DEFAULT_VOLUME;
 
   async onload(): Promise<void> {
@@ -1239,6 +1275,11 @@ export default class ChoirPlugin extends Plugin {
   }
 
   onunload(): void {
+    if (this.saveTimer !== null) {
+      window.clearTimeout(this.saveTimer);
+      this.saveTimer = null;
+      void this.flushSave();
+    }
     this.audio.pause();
     this.audio.removeAttribute("src");
     this.audio.load();
@@ -1256,10 +1297,7 @@ export default class ChoirPlugin extends Plugin {
   }
 
   async saveChoirData(): Promise<void> {
-    const data = this.data.settings.rememberQueue
-      ? this.data
-      : { ...this.data, queue: [], currentIndex: -1 };
-    await this.saveData(data);
+    await this.saveData(dataForSave(this.data));
   }
 
   registerViewInstance(view: ChoirView): void {
@@ -1924,6 +1962,13 @@ export default class ChoirPlugin extends Plugin {
       this.refreshLibrary();
     }));
 
+    this.registerEvent(this.app.vault.on("modify", (file) => {
+      if (!(file instanceof TFile) || !isAudioFile(file)) return;
+      this.forgetArtwork(file.path);
+      this.metadataCache.delete(file.path);
+      if (this.isInConfiguredLibrary(file.path)) this.broadcast("content");
+    }));
+
     this.registerEvent(this.app.vault.on("rename", (file, oldPath) => {
       if (!(file instanceof TFile) || (!isAudioPath(oldPath) && !isAudioFile(file))) return;
       if (isAudioFile(file)) {
@@ -2201,17 +2246,28 @@ export default class ChoirPlugin extends Plugin {
 
   private removePathEverywhere(pathToRemove: string): void {
     let changed = false;
-    const currentPath = this.getCurrentPath();
+    const oldQueue = this.data.queue;
+    const oldCurrentIndex = this.data.currentIndex;
+    const currentPath = oldCurrentIndex >= 0 ? oldQueue[oldCurrentIndex] ?? null : null;
     this.forgetArtwork(pathToRemove);
     this.metadataCache.delete(pathToRemove);
 
-    const queueBefore = this.data.queue.length;
-    this.data.queue = this.data.queue.filter((path) => path !== pathToRemove);
+    const queueBefore = oldQueue.length;
+    const removedBeforeCurrent = oldCurrentIndex > 0
+      ? oldQueue.slice(0, oldCurrentIndex).filter((path) => path === pathToRemove).length
+      : 0;
+    const removedCurrent = currentPath === pathToRemove;
+
+    this.data.queue = oldQueue.filter((path) => path !== pathToRemove);
     changed ||= this.data.queue.length !== queueBefore;
     if (this.data.queue.length === 0) {
       this.data.currentIndex = -1;
+    } else if (removedCurrent) {
+      this.data.currentIndex = clamp(oldCurrentIndex, 0, this.data.queue.length - 1);
+    } else if (oldCurrentIndex >= 0) {
+      this.data.currentIndex = clamp(oldCurrentIndex - removedBeforeCurrent, 0, this.data.queue.length - 1);
     } else {
-      this.data.currentIndex = clamp(this.data.currentIndex, 0, this.data.queue.length - 1);
+      this.data.currentIndex = -1;
     }
 
     for (const playlist of this.data.playlists) {
@@ -2287,7 +2343,19 @@ export default class ChoirPlugin extends Plugin {
   }
 
   private saveSoon(): void {
-    void this.saveChoirData();
+    if (this.saveTimer !== null) window.clearTimeout(this.saveTimer);
+    this.saveTimer = window.setTimeout(() => {
+      this.saveTimer = null;
+      void this.flushSave();
+    }, 250);
+  }
+
+  private flushSave(): Promise<void> {
+    const run = this.savePromise.then(() => this.saveChoirData());
+    this.savePromise = run.catch((error) => {
+      console.warn("[choir] Could not save plugin data.", error);
+    });
+    return this.savePromise;
   }
 }
 

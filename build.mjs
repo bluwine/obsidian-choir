@@ -1,4 +1,5 @@
 import { build, context } from "esbuild";
+import { watch } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
@@ -34,5 +35,27 @@ if (isProd) {
   const ctx = await context(buildOptions);
   await ctx.watch();
   await bundleStyles();
-  console.log("[choir] esbuild watching src/main.ts");
+
+  const styleWatcher = watch(join(here, "src", "styles.css"), async () => {
+    try {
+      await bundleStyles();
+      console.log("[choir] copied src/styles.css");
+    } catch (error) {
+      console.error("[choir] could not copy src/styles.css", error);
+    }
+  });
+
+  const dispose = async () => {
+    styleWatcher.close();
+    await ctx.dispose();
+  };
+
+  process.once("SIGINT", () => {
+    void dispose().finally(() => process.exit(0));
+  });
+  process.once("SIGTERM", () => {
+    void dispose().finally(() => process.exit(0));
+  });
+
+  console.log("[choir] esbuild watching src/main.ts and src/styles.css");
 }
