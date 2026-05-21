@@ -12,9 +12,7 @@ This checklist follows the public Obsidian plugin release flow.
 
    ```sh
    npm install
-   npm run typecheck
-   npm run build
-   node --check main.js
+   npm run check
    ```
 
 6. Review the repository for private files:

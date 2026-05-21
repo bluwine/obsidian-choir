@@ -23,7 +23,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "node build.mjs production",
-    "dev": "node build.mjs"
+    "dev": "node build.mjs",
+    "check": "npm run typecheck && npm run build && node --check main.js"
   },
   "devDependencies": {
     "esbuild": "^0.28.0",

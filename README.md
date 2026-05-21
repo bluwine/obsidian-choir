@@ -143,6 +143,12 @@ Syntax-check the generated bundle:
 node --check main.js
 ```
 
+Run the full local verification path:
+
+```sh
+npm run check
+```
+
 Release assets are intentionally checked in:
 
 - `main.js`

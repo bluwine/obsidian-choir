@@ -20,10 +20,13 @@ npm install
 npm run typecheck
 npm run build
 npm run dev
+npm run check
 node --check main.js
 ```
 
 `npm run dev` starts an esbuild watch process and writes `main.js` plus `styles.css`. Stop it with `Ctrl+C`.
+
+`npm run check` runs the same verification path as CI: TypeScript, production build, and a syntax check of the generated bundle.
 
 ## Build outputs
 
